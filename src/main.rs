@@ -1,83 +1,76 @@
-use std::fmt::{ Display};
-use std::cmp::PartialOrd;
-pub struct Tree<T: Display + PartialOrd > {
-    left:Option<Box<Tree<T>>>,
-    right:Option<Box<Tree<T>>>,
-    root:T,
+use std::ptr;
+pub struct Node {
+    left:*mut Node,
+    right:*mut Node,
+    data:i32,
+    parent: *mut Node,
 }
 
-impl <T: Display + PartialOrd > Tree<T> {
-    fn new(root:T) -> Tree<T> {
-        Tree{
-            root:root,
-            left:None,
-            right:None
-        }
-
-
-    }
-
-    fn insert_left(&mut self,leaf:Tree<T>){
-        self.left = Some(Box::new(leaf));
-        
-    }
-
-    fn insert_right(&mut self,leaf:Tree<T>) {
-        self.right = Some(Box::new(leaf));
-        
-    }
-   pub fn print_leaves_left_to_right(&self) {
-
-    match &self.left {
-        None =>{
-        },
-        Some(n) => {
-            n.print_leaves_left_to_right();
+impl Node {
+    fn new(d:i32) -> Node{
+        Node {
+            left:ptr::null_mut(),
+            right:ptr::null_mut(),
+            data:d,
+            parent:ptr::null_mut()
         }
     }
 
-    match &self.right {
-        None => {
-        },
-        Some(n) => {
-            n.print_leaves_left_to_right();
+         fn insert(&mut self, n:i32) {
+             unsafe {
+             if n <= self.data{
+                 let mut newnode = Node::new(n);
+                 //(*self.left).parent = self;
+                 self.left = Box::into_raw(Box::new(Node::new(n)));
+
+               
+                 (*self.left).parent = self;
+                
+             }
+            else {
+                let mut newnode = Node::new(n);
+                self.right = Box::into_raw(Box::new(Node::new(n)));
+
+                (*self.right).parent = self;
+            }
+
+             }
+         }
+
+    fn print(&mut self){
+        println!("value:{}",self.data)
+    }
+    fn print_left_child(&mut self){
+        unsafe {
+            if !self.left.is_null(){
+                (*self.left).print();
+            }
+
         }
     }
-    println!("leaf''{}''",self.root);
-   }
+    fn print_right_child(&mut self){
+        unsafe {
+            if !self.right.is_null(){
+                (*self.right).print();
+            }
 
-   pub fn insert(&mut self,leaf:Tree<T>){
-       if self.root > leaf.root {
-           match &mut self.left {
-               None =>{
-                   self.insert_left(leaf);
-               },
-               Some(n) => {
-                   n.insert(leaf);
-               }
-           }
-       }else if self.root < leaf.root {
-           match &mut self.right {
-               None => {
-                   self.insert_right(leaf);
-               },
-               Some(n)=> {
-                   n.insert(leaf);
-               }
-           }
-       }
-
-   }
-
+        }
+    }   
+    
+    
 }
-
 
 fn main() {
-    let mut tt = Tree::new(7);
-    tt.insert(Tree::new(6));
-    tt.insert(Tree::new(8));
-
-
-    tt.print_leaves_left_to_right();
-                       
+    println!("unsafe rust!");
+    let mut root = Node::new(5);
+    root.insert(4);
+    root.insert(6);
+    unsafe {
+     println!("right branch = {}",(*root.right).data);
+     println!("left branch = {}",(*root.left).data);
+     println!("parent value = {}",(*(*root.left).parent).data);
+        
+    }
+    root.print_left_child();
+    root.print_right_child();
 }
