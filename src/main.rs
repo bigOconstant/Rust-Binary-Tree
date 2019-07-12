@@ -39,13 +39,13 @@ impl Node {
         }
     }
     fn delete_left(&mut self) {
-        if !self.right.is_null() {
+        if !self.left.is_null() {
             unsafe {
-                if !(*self.right).right.is_null() {
-                    (*self.right).delete_right();
-                }
                 if !(*self.right).left.is_null() {
                     (*self.right).delete_left();
+                }
+                if !(*self.right).right.is_null() {
+                    (*self.right).delete_right();
                 }
                 let mut left_ptr = ptr::null_mut();
 
