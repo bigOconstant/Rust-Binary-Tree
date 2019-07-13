@@ -17,6 +17,13 @@ impl Node {
         }
     }
 
+    /*
+       Insert: Take in a number and inserts a node.
+               If number is larger than current node it inserts to right.
+               If number is smaller than current node it inserts to left.
+               If number already exists it doesn't do anything. This tree doesnt add dupes.
+     */
+
     fn insert(&mut self, n: i32) {
         unsafe {
             if n < self.data {
@@ -36,6 +43,11 @@ impl Node {
             }
         }
     }
+
+    /*
+        delete_left: Deletes the node to the left and all children of that node
+    */
+    
     fn delete_left(&mut self) {
         if !self.left.is_null() {
             unsafe {
@@ -53,6 +65,9 @@ impl Node {
         }
     }
 
+    /*
+        delete_right: Deletes the node to the right and all children of that node
+    */
     fn delete_right(&mut self) {
         if !self.right.is_null() {
             unsafe {
@@ -71,6 +86,10 @@ impl Node {
         }
     }
 
+    /*
+        print_tree: Prints an ugly tree to see contents. Will be updates to print a tree that shows levels better
+    */
+
     fn print_tree(&self) {
         println!("{}", self.data);
         unsafe {
@@ -85,6 +104,11 @@ impl Node {
         }
 
     }
+
+    /*
+       get_depth: Finds the depth of the tree.
+                  Must visit each node. 
+    */
 
     fn get_depth(&self)->i32 {
        
