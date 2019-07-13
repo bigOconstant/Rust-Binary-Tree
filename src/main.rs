@@ -87,7 +87,7 @@ impl Node {
     }
 
     /*
-        print_tree: Prints an ugly tree to see contents. Will be updates to print a tree that shows levels better
+        print_tree: Prints an ugly tree to see contents. Will be updated to print a tree that shows levels better
     */
 
     fn print_tree(&self) {
