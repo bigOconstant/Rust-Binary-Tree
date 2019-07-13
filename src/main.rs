@@ -87,7 +87,7 @@ impl Node {
     }
 
     fn get_depth(&self)->i32 {
-        let depth = 0;
+       
         fn get_depth_inner(n_d:&Node,depth:i32) ->i32{
             let mut leftdepth = 0;
             let mut rightdepth = 0;
@@ -125,7 +125,7 @@ impl Node {
             return max;
             
         }
-        return get_depth_inner(&self,depth);
+        return get_depth_inner(&self,0);
 
         
     }
