@@ -87,22 +87,49 @@ impl Node {
     }
 
     /*
-        print_tree: Prints an ugly tree to see contents. Will be updated to print a tree that shows levels better
+        print_tree: Prints a tree somewhat in order of levels
     */
 
     fn print_tree(&self) {
-        println!("{}", self.data);
-        unsafe {
-            if !self.right.is_null() {
-                println!("\\");
-                (*self.right).print_tree();
-            }
-            if !self.left.is_null() {
-                println!("/");
-                (*self.left).print_tree();
-            }
+        let mut vectorised_tree:Vec<Vec<i32>> = Vec::new();
+
+        let size = self.get_depth()+1;
+        for _ in 0..size {
+            let inner: Vec<i32> = Vec::new();
+            vectorised_tree.push(inner);
         }
 
+        fn recurse_build (n_d:&Node,mut tree:&mut Vec<Vec<i32>>,depth:i32)  {
+            tree[depth as usize].push(n_d.data);
+            //println!("Tree data pushing:{}",n_d.data);
+
+            if ! n_d.right.is_null() {
+                unsafe {
+                    recurse_build(&*n_d.right , tree,depth - 1);
+                }
+            }
+
+            if ! n_d.left.is_null(){
+                unsafe {
+                    recurse_build(&*n_d.left , tree,depth -1);
+                }
+            }
+        }
+        recurse_build(self,&mut vectorised_tree,size-1);
+
+        for i in (0..size).rev() {
+            let inner_value = vectorised_tree.get(i as usize);
+            println!("");
+            match inner_value {
+                Some(n) => {
+                    for k in n.iter().rev() {
+                        print!(" {} ",k);
+                    }
+                }
+                 None =>{}
+            }
+        }
+          println!("\n");
     }
 
     /*
@@ -136,8 +163,6 @@ impl Node {
                     rightdepth = get_depth_inner(&*n_d.right,depth+1);
                 }
             }
-
-
             
             let mut max = depth;
             if leftdepth > max {
@@ -153,8 +178,6 @@ impl Node {
 
         
     }
-
-    
 }
 
 fn main() {
