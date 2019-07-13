@@ -21,7 +21,6 @@ impl Node {
         unsafe {
             if n < self.data {
                 if self.left.is_null() {
-                    let mut newnode = Node::new(n);
                     self.left = Box::into_raw(Box::new(Node::new(n)));
                     (*self.left).parent = self;
                 } else {
@@ -29,7 +28,6 @@ impl Node {
                 }
             } else {
                 if self.right.is_null() {
-                    let mut newnode = Node::new(n);
                     self.right = Box::into_raw(Box::new(Node::new(n)));
                     (*self.right).parent = self;
                 } else {
@@ -85,7 +83,54 @@ impl Node {
                 (*self.left).print_tree();
             }
         }
+
     }
+
+    fn get_depth(&self)->i32 {
+        let depth = 0;
+        fn get_depth_inner(n_d:&Node,depth:i32) ->i32{
+            let mut leftdepth = 0;
+            let mut rightdepth = 0;
+
+            if n_d.right.is_null() { // right node is null
+                if n_d.left.is_null(){ //left node is also null, return
+                    return depth;
+                }else { // left node isn't null. Recurse to the left
+                    unsafe{
+                        leftdepth = get_depth_inner(&*n_d.left,depth+1);
+                    }
+                }
+            } else if  n_d.left.is_null() { //right node is not null left node is
+               unsafe {
+                   rightdepth = get_depth_inner(&*n_d.right,depth+1)
+               }
+                              
+            } else {
+                // Niether left or right is null. update both
+                unsafe {
+                    leftdepth = get_depth_inner(&*n_d.left,depth+1);
+                    rightdepth = get_depth_inner(&*n_d.right,depth+1);
+                }
+            }
+
+
+            
+            let mut max = depth;
+            if leftdepth > max {
+                max = leftdepth;
+            }
+            if rightdepth > max {
+                max = rightdepth;
+            }
+            return max;
+            
+        }
+        return get_depth_inner(&self,depth);
+
+        
+    }
+
+    
 }
 
 fn main() {
@@ -94,12 +139,16 @@ fn main() {
     root.insert(14);
     root.insert(16);
     root.insert(12);
+    root.insert(11);
+    root.insert(10);
+    root.insert(17);
 
     unsafe {
         println!("right branch = {}", (*root.right).data);
         println!("left branch = {}", (*root.left).data);
     }
     
+    println!("depth:{}",root.get_depth());
     root.print_tree();
     root.delete_left();
     println!("Deleting everything left of 15");
