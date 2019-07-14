@@ -1,6 +1,77 @@
 use std::mem;
 use std::ptr;
 use rand::{self, Rng};
+
+
+pub struct Avl_Tree {
+    root: *mut Node
+}
+
+impl Avl_Tree {
+
+    fn new(d: i32)-> Avl_Tree{
+        Avl_Tree {
+            root: Box::into_raw(Box::new(Node::new(d))),
+        }
+    }
+    
+    fn insert(&mut self,n:i32) {
+        unsafe {
+            if ! self.root.is_null(){
+                (*self.root).insert(n);
+            } else {
+                panic!("tree not initialised. Try calling Avl_Tree::new(i32)");
+            }
+        }
+    }
+
+    fn is_balanced(&self)->bool {
+        unsafe {
+            if ! self.root.is_null() {
+                return (*self.root).is_balanced();
+            } else {
+                panic!("tree not initialised. Try calling Avl_Tree::new(i32)");
+                return false;
+            }
+        }
+    }
+    fn get_depth(&self)-> i32 {
+        unsafe {
+            if ! self.root.is_null() {
+                return (*self.root).get_depth();
+            } else {
+                return 0;
+            }
+        }
+    }
+
+    fn print_tree(&self) {
+        unsafe {
+            if ! self.root.is_null() {
+                (*self.root).print_tree();
+            }
+        }
+    }
+
+    fn delete_left(&mut self){
+        unsafe {
+            if ! self.root.is_null() {
+                (*self.root).delete_left();
+            }
+        }
+    }
+
+    fn delete_right(&mut self){
+        unsafe {
+            if ! self.root.is_null() {
+                (*self.root).delete_right();
+            }
+        }
+    }
+}
+
+
+#[derive(Clone)]
 pub struct Node {
     left: *mut Node,
     right: *mut Node,
@@ -266,39 +337,39 @@ impl Node {
         return false;
 
     }
+
 }
 
 fn main() {
     println!("unsafe rust!");
+
+    let mut A_Tree = Avl_Tree::new(100);
+    
     let mut root = Node::new(100);
 
 
-    root.insert(99);
-    root.insert(101);
-     println!("root  balanced:{}",root.is_balanced());
+    A_Tree.insert(99);
+    A_Tree.insert(101);
+     println!("root  balanced:{}",A_Tree.is_balanced());
     // tree should be balanced;
-    root.insert(102);
-    root.insert(103);
-    root.insert(104);
+    A_Tree.insert(102);
+    A_Tree.insert(103);
+    A_Tree.insert(104);
     // Tree should not be balanced;
-    println!("root  balanced:{}",root.is_balanced());
+    println!("root  balanced:{}",A_Tree.is_balanced());
         
     let mut rng = rand::thread_rng();
     for _ in 1..200 {
         let die = rng.gen_range(1, 200);
-        root.insert(die);
+        A_Tree.insert(die);
     }
     
     
-    println!("depth:{}",root.get_depth());
-    root.print_tree();
-    let leftvalue = match root.get_left_value() {
-        Some(n)=> {n},
-        None => 0
+    println!("depth:{}",A_Tree.get_depth());
+    A_Tree.print_tree();
 
-    };
-    println!("Deleting everything left of {}",leftvalue);
-    root.delete_left();
+    println!("Deleting everything left the root node");
+    A_Tree.delete_left();
 
-    root.print_tree();
+    A_Tree.print_tree();
 }
