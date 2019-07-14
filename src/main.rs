@@ -209,20 +209,81 @@ impl Node {
             
         }
         return get_depth_inner(&self,0);
+    }
+
+    /* is_balanced: test whether tree is balanced. Algorithm taken from.
+                    https://www.geeksforgeeks.org/how-to-determine-if-a-binary-tree-is-balanced/
+
+    */
+
+    fn is_balanced(&self)-> bool {
+        let mut left_height = 0;
+        let mut right_height = 0;
+
+        if self.left.is_null() && self.right.is_null() {
+            return true;
+        }
 
         
+        if !self.left.is_null() {
+            unsafe {
+                left_height = (*self.left).get_depth();
+            }
+        }
+
+        if !self.right.is_null(){
+            unsafe {
+                right_height = (*self.right).get_depth();
+            }
+        }
+
+        if (left_height - right_height).abs() <=1 {
+            let mut bool1 = false;
+            let mut bool2 = false;
+            if self.right.is_null() {
+                bool1 = true
+            } else {
+                unsafe {
+                    bool1 = (*self.right).is_balanced();
+                }
+            }
+            if self.left.is_null() {
+                bool2 = true;
+            } else {
+                unsafe {
+                    bool2 = (*self.left).is_balanced();
+                }
+            }
+
+            if bool1 && bool2 {
+                return true;
+            } else {
+                return false;
+            }
+            
+        }
+        //not balanced
+        return false;
+
     }
 }
 
 fn main() {
     println!("unsafe rust!");
     let mut root = Node::new(100);
-//    root.insert(14);
-//    root.insert(16);
-//    root.insert(12);
-//    root.insert(11);
-//    root.insert(10);
-    //    root.insert(17);
+
+
+    root.insert(99);
+    root.insert(101);
+     println!("root  balanced:{}",root.is_balanced());
+    // tree should be balanced;
+    root.insert(102);
+    root.insert(103);
+    root.insert(104);
+    println!("root  balanced:{}",root.is_balanced());
+    
+
+    
     let mut rng = rand::thread_rng();
     for _ in 1..200 {
         let die = rng.gen_range(1, 200);
