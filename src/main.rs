@@ -102,7 +102,6 @@ impl Node {
 
         fn recurse_build (n_d:&Node,mut tree:&mut Vec<Vec<i32>>,depth:i32)  {
             tree[depth as usize].push(n_d.data);
-            //println!("Tree data pushing:{}",n_d.data);
 
             if ! n_d.right.is_null() {
                 unsafe {
@@ -258,6 +257,7 @@ impl Node {
             if bool1 && bool2 {
                 return true;
             } else {
+                //Not balanced
                 return false;
             }
             
@@ -280,21 +280,15 @@ fn main() {
     root.insert(102);
     root.insert(103);
     root.insert(104);
+    // Tree should not be balanced;
     println!("root  balanced:{}",root.is_balanced());
-    
-
-    
+        
     let mut rng = rand::thread_rng();
     for _ in 1..200 {
         let die = rng.gen_range(1, 200);
         root.insert(die);
     }
     
-
-    unsafe {
-        println!("right branch = {}", (*root.right).data);
-        println!("left branch = {}", (*root.left).data);
-    }
     
     println!("depth:{}",root.get_depth());
     root.print_tree();
