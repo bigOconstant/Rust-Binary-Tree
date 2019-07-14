@@ -1,5 +1,6 @@
 use std::mem;
 use std::ptr;
+use rand::{self, Rng};
 pub struct Node {
     left: *mut Node,
     right: *mut Node,
@@ -133,6 +134,39 @@ impl Node {
     }
 
     /*
+      get_left_value: If value of node left of current return Option value containing data
+                      else return None value.
+
+    */
+    fn get_left_value(&self)-> Option<i32> {
+       unsafe {
+            if ! self.left.is_null() {       
+                Some((*self.left).data)
+            } else {
+                None
+            }
+       }
+       
+    }
+    /*
+      get_left_value: If value of node left of current return Option value containing data
+                      else return None value.
+
+     */
+    fn get_right_value(&self)-> Option<i32> {
+       unsafe {
+            if ! self.right.is_null() {       
+                Some((*self.right).data)
+            } else {
+                None
+            }
+       }
+       
+    }
+       
+    
+
+    /*
        get_depth: Finds the depth of the tree.
                   Must visit each node. 
     */
@@ -182,13 +216,19 @@ impl Node {
 
 fn main() {
     println!("unsafe rust!");
-    let mut root = Node::new(15);
-    root.insert(14);
-    root.insert(16);
-    root.insert(12);
-    root.insert(11);
-    root.insert(10);
-    root.insert(17);
+    let mut root = Node::new(100);
+//    root.insert(14);
+//    root.insert(16);
+//    root.insert(12);
+//    root.insert(11);
+//    root.insert(10);
+    //    root.insert(17);
+    let mut rng = rand::thread_rng();
+    for _ in 1..200 {
+        let die = rng.gen_range(1, 200);
+        root.insert(die);
+    }
+    
 
     unsafe {
         println!("right branch = {}", (*root.right).data);
@@ -197,7 +237,13 @@ fn main() {
     
     println!("depth:{}",root.get_depth());
     root.print_tree();
+    let leftvalue = match root.get_left_value() {
+        Some(n)=> {n},
+        None => 0
+
+    };
+    println!("Deleting everything left of {}",leftvalue);
     root.delete_left();
-    println!("Deleting everything left of 15");
+
     root.print_tree();
 }
